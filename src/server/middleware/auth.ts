@@ -1,26 +1,25 @@
-import { createMiddleware } from '@tanstack/react-start'
-import { verifyToken } from '../lib/jwt'
+import { createMiddleware } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
+import { verifyToken } from "@/server/lib/jwt";
 
 export const authMiddleware = createMiddleware().server(
-  async ({ next, request }) => {
-    const authHeader = request.headers.get('Authorization')
+  async ({ next }) => {
+    const request = getRequest();
 
-    if (!authHeader?.startsWith('Bearer ')) {
-      throw new Error('Unauthorized')
-    }
+    const cookie = request.headers.get("cookie");
+    const token = cookie
+      ?.split(";")
+      .find((c) => c.trim().startsWith("token="))
+      ?.split("=")[1];
 
-    const token = authHeader.split(' ')[1]
+    if (!token) throw new Error("Unauthorized");
 
-    const userId = await verifyToken(token)
+    const user = verifyToken(token);
 
-    if (!userId) {
-      throw new Error('Unauthorized')
-    }
+    if (!user) throw new Error("Unauthorized");
 
     return next({
-      context: {
-        userId,
-      },
-    })
-  },
-)
+      context: { user },
+    });
+  }
+);
