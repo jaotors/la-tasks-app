@@ -1,8 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { authService } from './auth.service'
-import { authMiddleware } from '@/server/middleware/auth'
 import { redirect } from '@tanstack/react-router'
-import { setCookie } from '@tanstack/react-start/server'
+import { getCookie, setCookie } from '@tanstack/react-start/server'
 
 export const register = createServerFn({ method: 'POST' })
   .inputValidator((data: { username: string; password: string }) => data)
@@ -16,13 +15,12 @@ export const register = createServerFn({ method: 'POST' })
     })
 
     throw redirect({
-      to: '/',
+      to: '/app',
     })
   })
 
 export const login = createServerFn({ method: 'POST' })
   .inputValidator((data: { username: string; password: string }) => data)
-  .middleware([authMiddleware])
   .handler(async ({ data }) => {
     const { token } = await authService.login(data)
 
@@ -33,7 +31,8 @@ export const login = createServerFn({ method: 'POST' })
     })
 
     throw redirect({
-      to: '/',
+      to: '/app',
+      throw: true,
     })
   })
 
@@ -46,4 +45,10 @@ export const logout = createServerFn({ method: 'POST' }).handler(() => {
   throw redirect({
     to: '/',
   })
+})
+
+export const checkAuth = createServerFn({ method: 'GET' }).handler(() => {
+  const token = getCookie('token')
+
+  return { hasToken: !!token }
 })

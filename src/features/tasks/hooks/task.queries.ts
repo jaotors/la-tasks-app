@@ -2,10 +2,12 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { taskApi } from './task.api'
 
 export const useTasks = () => {
+  const { getTasks } = taskApi()
+
   return useInfiniteQuery({
     queryKey: ['tasks'],
     queryFn: ({ pageParam }: { pageParam: string | undefined }) =>
-      taskApi.getTasks({
+      getTasks({
         data: { cursor: pageParam },
       }),
 

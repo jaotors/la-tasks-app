@@ -14,6 +14,7 @@ export const createTask = createServerFn({ method: 'POST' })
   .middleware([authMiddleware])
   .inputValidator((data: { title: string; description?: string }) => data)
   .handler(async ({ context, data }) => {
+    console.log('server functions data', data)
     return taskService.createTask(context.user.userId, data)
   })
 

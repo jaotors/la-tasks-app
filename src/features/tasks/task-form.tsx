@@ -7,7 +7,7 @@ type FormData = {
   description?: string
 }
 
-export const TaskForm = () => {
+export const TaskForm = ({ onClose }: { onClose: () => void }) => {
   const {
     register,
     handleSubmit,
@@ -20,6 +20,7 @@ export const TaskForm = () => {
   const onSubmit = async (data: FormData) => {
     createTask(data)
     reset()
+    onClose()
   }
 
   return (
@@ -31,7 +32,7 @@ export const TaskForm = () => {
         <div>
           <input
             {...register('title', { required: true })}
-            placeholder="Username"
+            placeholder="Title"
             className="block border-2 p-2 w-full"
           />
           {errors.title && (

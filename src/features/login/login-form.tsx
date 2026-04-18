@@ -1,3 +1,4 @@
+import { useServerFn } from '@tanstack/react-start'
 import Button from '@/components/button'
 import { useForm } from 'react-hook-form'
 import { login } from '@/server/modules/auth/auth.function'
@@ -9,9 +10,14 @@ type FormData = {
 
 export function LoginForm() {
   const { register, handleSubmit } = useForm<FormData>()
+  const authLogin = useServerFn(login)
 
   const onSubmit = async (data: FormData) => {
-    await login({ data })
+    try {
+      await authLogin({ data })
+    } catch (error) {
+      console.log('Login error', error)
+    }
   }
 
   return (
