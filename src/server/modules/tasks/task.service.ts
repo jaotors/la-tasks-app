@@ -4,6 +4,20 @@ import { generateAfter } from './position'
 const DEFAULT_LIMIT = 50
 
 export const taskService = {
+  async getTask(userId: string, taskId: string) {
+    const task = await prisma.task.findFirst({
+      where: {
+        id: taskId,
+        userId,
+      },
+    })
+
+    if (!task) {
+      throw new Error('Not found')
+    }
+
+    return task
+  },
   async getTasks(userId: string, cursor?: string) {
     const tasks = await prisma.task.findMany({
       where: {

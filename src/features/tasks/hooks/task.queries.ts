@@ -1,5 +1,17 @@
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { taskApi } from './task.api'
+
+export const useTask = (id: string) => {
+  const { getTask } = taskApi()
+
+  return useQuery({
+    queryKey: ['task', id],
+    queryFn: () =>
+      getTask({
+        data: { taskId: id },
+      }),
+  })
+}
 
 export const useTasks = () => {
   const { getTasks } = taskApi()

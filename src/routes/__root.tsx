@@ -48,8 +48,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="font-sans antialiased flex flex-col h-screen">
+        <Header />
         <main className="container mx-auto px-4 h-full flex flex-col justify-center items-center">
-          <div className="w-full lg:w-md">{children}</div>
+          <div className="w-full lg:max-w-4xl">{children}</div>
         </main>
         <TanStackDevtools
           config={{

@@ -9,9 +9,15 @@ import { TaskForm } from './task-form'
 export const TaskList = () => {
   const { data, fetchNextPage, hasNextPage } = useTasks()
   const { mutate: deleteTask } = useDeleteTask()
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false)
 
   const handleOpenAddModal = () => {
+    setIsAddModalOpen(true)
+  }
+
+  const handleEditTask = (taskId: string) => {
+    setEditingTaskId(taskId)
     setIsAddModalOpen(true)
   }
 
@@ -30,12 +36,12 @@ export const TaskList = () => {
                 key={task.id}
                 className="flex items-center justify-between border-2 p-2"
               >
-                <span>{task.title}</span>
+                <span className="border-b-2">{task.title}</span>
 
-                <div className='flex gap-4'>
+                <div className="flex gap-4">
                   <Button
                     onClick={() => {
-                      deleteTask(task.id)
+                      handleEditTask(task.id)
                     }}
                     label="Edit"
                   />
@@ -60,10 +66,17 @@ export const TaskList = () => {
       <Dialog
         open={isAddModalOpen}
         onClose={() => {
+          setEditingTaskId(null)
           setIsAddModalOpen(false)
         }}
       >
-        <TaskForm onClose={() => setIsAddModalOpen(false)} />
+        <TaskForm
+          taskId={editingTaskId}
+          onClose={() => {
+            setEditingTaskId(null)
+            setIsAddModalOpen(false)
+          }}
+        />
       </Dialog>
     </>
   )

@@ -1,21 +1,34 @@
 import { useForm } from 'react-hook-form'
+import { useTask } from './hooks/task.queries'
 import { useCreateTask } from './hooks/task.mutations'
 import Button from '@/components/button'
+import { useEffect } from 'react'
 
 type FormData = {
   title: string
   description?: string
 }
 
-export const TaskForm = ({ onClose }: { onClose: () => void }) => {
+type Props = {
+  taskId?: string | null
+  onClose: () => void
+}
+
+export const TaskForm = ({ taskId, onClose }: Props) => {
+  const { data: task } = useTask(taskId || '')
+  const { mutate: createTask, isPending } = useCreateTask()
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<FormData>()
-
-  const { mutate: createTask, isPending } = useCreateTask()
+  } = useForm<FormData>({
+    defaultValues: {
+      title: task?.title || '',
+      description: task?.description || '',
+    },
+  })
 
   const onSubmit = async (data: FormData) => {
     createTask(data)
@@ -23,10 +36,19 @@ export const TaskForm = ({ onClose }: { onClose: () => void }) => {
     onClose()
   }
 
+  useEffect(() => {
+    if (task) {
+      reset({
+        title: task.title,
+        description: task.description,
+      })
+    }
+  }, [task])
+
   return (
     <>
       <h2 className="text-2xl border-b-4 mb-4 inline-block font-bold">
-        New Task
+        {taskId ? 'Edit Task' : 'Add Task'}
       </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div>

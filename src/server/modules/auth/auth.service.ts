@@ -53,4 +53,16 @@ export const authService = {
       user: { id: user.id, username: user.username },
     }
   },
+  async getUser(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, username: true },
+    })
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
+    return user
+  },
 }

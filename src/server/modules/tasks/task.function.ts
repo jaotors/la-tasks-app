@@ -2,6 +2,14 @@ import { createServerFn } from '@tanstack/react-start'
 import { authMiddleware } from '@/server/middleware/auth'
 import { taskService } from './task.service'
 
+export const getTask = createServerFn({ method: 'GET' })
+  .middleware([authMiddleware])
+  .inputValidator((data: { taskId: string }) => data)
+  .handler(async ({ context, data }) => {
+    const { taskId } = data || {}
+    return taskService.getTask(context.user.userId, taskId)
+  })
+
 export const getTasks = createServerFn({ method: 'GET' })
   .middleware([authMiddleware])
   .inputValidator((data: { cursor?: string }) => data)
