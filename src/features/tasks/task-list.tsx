@@ -1,16 +1,45 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTasks } from './hooks/task.queries'
-import { useDeleteTask } from './hooks/task.mutations'
+import { useDeleteTask, useReorderTask } from './hooks/task.mutations'
+
 import Card from '@/components/card'
 import Button from '@/components/button'
 import { Dialog } from '@/components/modal'
 import { TaskForm } from './task-form'
+import { TaskItem } from './task-item'
+
+import {
+  DndContext,
+  closestCenter,
+  type DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable'
 
 export const TaskList = () => {
   const { data, fetchNextPage, hasNextPage } = useTasks()
+  const { mutate: reorderTask } = useReorderTask()
   const { mutate: deleteTask } = useDeleteTask()
+
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false)
+
+  const flatTasks = data?.pages.flatMap((p) => p.data) ?? []
+  const [tasks, setTasks] = useState(flatTasks)
+
+  // 🔥 sensors (better UX)
+  const sensors = useSensors(useSensor(PointerSensor))
+
+  useEffect(() => {
+    setTasks(flatTasks)
+  }, [data])
 
   const handleOpenAddModal = () => {
     setIsAddModalOpen(true)
@@ -21,6 +50,29 @@ export const TaskList = () => {
     setIsAddModalOpen(true)
   }
 
+  // 🔥 main drag logic
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (!over || active.id === over.id) return
+
+    const oldIndex = tasks.findIndex((t) => t.id === active.id)
+    const newIndex = tasks.findIndex((t) => t.id === over.id)
+
+    const updated = arrayMove(tasks, oldIndex, newIndex)
+    setTasks(updated)
+
+    const moved = updated[newIndex]
+    const before = updated[newIndex - 1] || null
+    const after = updated[newIndex + 1] || null
+
+    reorderTask({
+      taskId: moved.id,
+      beforeId: before?.id ?? null,
+      afterId: after?.id ?? null,
+    })
+  }
+
   return (
     <>
       <Card>
@@ -29,33 +81,28 @@ export const TaskList = () => {
           <Button onClick={handleOpenAddModal} label="Add" />
         </div>
 
-        <div className="flex flex-col gap-4 mb-2">
-          {data?.pages.map((page) =>
-            page.data.map((task: any) => (
-              <div
-                key={task.id}
-                className="flex items-center justify-between border-2 p-2"
-              >
-                <span className="border-b-2">{task.title}</span>
-
-                <div className="flex gap-4">
-                  <Button
-                    onClick={() => {
-                      handleEditTask(task.id)
-                    }}
-                    label="Edit"
-                  />
-                  <Button
-                    onClick={() => {
-                      deleteTask(task.id)
-                    }}
-                    label="Delete"
-                  />
-                </div>
-              </div>
-            )),
-          )}
-        </div>
+        {/* 🔥 DND WRAPPER */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={tasks.map((t) => t.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="flex flex-col gap-4 mb-2">
+              {tasks.map((task) => (
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  onEdit={handleEditTask}
+                  onDelete={deleteTask}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
 
         <div>
           {hasNextPage && (
@@ -63,6 +110,7 @@ export const TaskList = () => {
           )}
         </div>
       </Card>
+
       <Dialog
         open={isAddModalOpen}
         onClose={() => {

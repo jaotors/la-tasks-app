@@ -5,7 +5,7 @@ export const Route = createFileRoute('/')({ component: App })
 
 function App() {
   return (
-    <>
+    <div className='h-full flex flex-col justify-center w-full gap-4'>
       <h1 className="font-black text-6xl border-b-4 mb-2">Task App</h1>
       <Card>
         <div className="flex justify-between">
@@ -23,6 +23,6 @@ function App() {
           </Link>
         </div>
       </Card>
-    </>
+    </div>
   )
 }

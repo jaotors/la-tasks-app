@@ -47,11 +47,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="font-sans antialiased flex flex-col h-screen">
-        <Header />
-        <main className="container mx-auto px-4 h-full flex flex-col justify-center items-center">
-          <div className="w-full lg:max-w-4xl">{children}</div>
-        </main>
+      <body className="font-sans antialiased">
+        <div className="flex flex-col h-screen">
+          <Header />
+          <main className="container mx-auto px-4 h-full">
+            <div className="w-full lg:max-w-4xl lg:mx-auto h-full">{children}</div>
+          </main>
+        </div>
         <TanStackDevtools
           config={{
             position: 'bottom-right',

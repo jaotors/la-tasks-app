@@ -4,6 +4,7 @@ import {
   updateTask,
   deleteTask,
   getTask,
+  reorderTask,
 } from '@/server/modules/tasks/task.function'
 import { useServerFn } from '@tanstack/react-start'
 
@@ -13,6 +14,7 @@ export const taskApi = () => {
   const serverFnCreateTask = useServerFn(createTask)
   const serverFnUpdateTask = useServerFn(updateTask)
   const serverFnDeleteTask = useServerFn(deleteTask)
+  const serverFnReorderTask = useServerFn(reorderTask)
 
   return {
     getTask: serverFnGetTask,
@@ -20,5 +22,6 @@ export const taskApi = () => {
     createTask: serverFnCreateTask,
     updateTask: serverFnUpdateTask,
     deleteTask: serverFnDeleteTask,
+    reorderTask: serverFnReorderTask,
   }
 }

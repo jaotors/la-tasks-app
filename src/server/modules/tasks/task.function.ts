@@ -42,3 +42,18 @@ export const deleteTask = createServerFn({ method: 'POST' })
   .handler(async ({ context, data }) => {
     return taskService.deleteTask(context.user.userId, data.id)
   })
+
+import { reorderService } from './reorder.service'
+
+export const reorderTask = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
+  .inputValidator(
+    (data: {
+      taskId: string
+      beforeId?: string | null
+      afterId?: string | null
+    }) => data,
+  )
+  .handler(async ({ context, data }) => {
+    return reorderService.reorderTask(context.user.userId, data)
+  })

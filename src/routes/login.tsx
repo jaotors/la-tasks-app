@@ -8,16 +8,18 @@ export const Route = createFileRoute('/login')({
 
 function RouteComponent() {
   return (
-    <>
-      <Link
-        to="/"
-        className="inline-block mb-4 font-bold px-4 py-2 border-2 shadow-md -hover cursor-pointer"
-      >
-        Back
-      </Link>
-      <Card>
-        <LoginForm />
-      </Card>
-    </>
+    <div className="flex flex-col h-full justify-center">
+      <div>
+        <Link
+          to="/"
+          className="inline-block mb-4 font-bold px-4 py-2 border-2 shadow-md -hover cursor-pointer"
+        >
+          Back
+        </Link>
+        <Card>
+          <LoginForm />
+        </Card>
+      </div>
+    </div>
   )
 }

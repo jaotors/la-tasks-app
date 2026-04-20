@@ -40,3 +40,20 @@ export const useDeleteTask = () => {
     },
   })
 }
+
+export function useReorderTask() {
+  const queryClient = useQueryClient()
+  const { reorderTask } = taskApi()
+
+  return useMutation({
+    mutationFn: (data: {
+      taskId: string
+      beforeId?: string | null
+      afterId?: string | null
+    }) => reorderTask({ data }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+    },
+  })
+}
