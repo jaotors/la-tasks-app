@@ -1,6 +1,6 @@
 import { prisma } from '@/server/lib/prisma'
 
-const BASE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+const BASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 
 function generateEvenPosition(index: number): string {
   const base = BASE.length

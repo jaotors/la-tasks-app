@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { authService } from './auth.service'
 import { redirect } from '@tanstack/react-router'
-import { getCookie, setCookie } from '@tanstack/react-start/server'
+import { setCookie } from '@tanstack/react-start/server'
 import { authMiddleware } from '@/server/middleware/auth'
 
 export const register = createServerFn({ method: 'POST' })
@@ -41,6 +41,7 @@ export const logout = createServerFn({ method: 'POST' }).handler(() => {
   setCookie('token', '', {
     httpOnly: true,
     path: '/',
+    maxAge: 0,
   })
 
   throw redirect({

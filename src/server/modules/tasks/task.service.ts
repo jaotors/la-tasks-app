@@ -22,22 +22,21 @@ export const taskService = {
     const tasks = await prisma.task.findMany({
       where: {
         userId,
-        ...(cursor
-          ? {
-              position: {
-                gt: cursor,
-              },
-            }
-          : {}),
       },
-      orderBy: {
-        position: 'asc',
-      },
+      orderBy: [{ position: 'asc' }, { id: 'asc' }],
       take: DEFAULT_LIMIT,
+      ...(cursor
+        ? {
+            skip: 1,
+            cursor: {
+              id: cursor,
+            },
+          }
+        : {}),
     })
 
     const nextCursor =
-      tasks.length === DEFAULT_LIMIT ? tasks[tasks.length - 1].position : null
+      tasks.length === DEFAULT_LIMIT ? tasks[tasks.length - 1].id : null
 
     return {
       data: tasks,

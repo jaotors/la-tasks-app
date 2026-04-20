@@ -1,6 +1,6 @@
 import Button from '@/components/button'
 import { useForm } from 'react-hook-form'
-import { register } from '@/server/modules/auth/auth.function'
+import { useRegister } from './hooks/auth.mutations'
 
 type FormData = {
   username: string
@@ -14,14 +14,17 @@ export function RegisterForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>()
+  const { mutate: register, isPending } = useRegister()
 
   const onSubmit = async (data: FormData) => {
-    await register({ data })
+    register(data)
   }
 
   return (
     <>
-      <h2 className="text-2xl border-b-4 mb-4 inline-block font-bold">Register</h2>
+      <h2 className="text-2xl border-b-4 mb-4 inline-block font-bold">
+        Register
+      </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div>
           <input
@@ -61,7 +64,7 @@ export function RegisterForm() {
             </p>
           )}
         </div>
-        <Button type="submit" label="Submit" />
+        <Button type="submit" label="Submit" disabled={isPending} />
       </form>
     </>
   )

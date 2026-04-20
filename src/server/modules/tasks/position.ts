@@ -1,4 +1,4 @@
-const BASE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+const BASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 const MIN = 0
 const MAX = BASE.length - 1
 
@@ -34,7 +34,7 @@ export function midpoint(a: string, b: string): string {
 }
 
 export function generateBetween(a: string, b: string): string {
-  if (a >= b) {
+  if (a === b) {
     throw new Error('INVALID_ORDER')
   }
   return midpoint(a, b)
